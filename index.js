@@ -14,7 +14,8 @@ var port = normalizePort(config.get('PORT') || 3000);
  * Create HTTP server.
  */
 // TODO: Add Server
-var db = mongojs(constants.mongoConnectionString);
+var db = mongojs(constants.mongoConnectionString());
+console.log("Connecting to mongo on: "+constants.mongoConnectionString());
 db.on('error', function (err) {
     console.log('database error', err)
 })
