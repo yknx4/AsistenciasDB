@@ -74,7 +74,4 @@ db.getCollectionNames(function (err, collections) {
     });
 });
 
-
-
-
 module.exports = server;
