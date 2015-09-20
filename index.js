@@ -1,6 +1,8 @@
 //#!/usr/bin/env node
 var cc          = require('config-multipaas');
 var config      = cc();
+var mongojs = require('mongojs');
+var constants = require('./constants');
 
 /**
  * Get port from environment and store in Express.
@@ -12,6 +14,17 @@ var port = normalizePort(config.get('PORT') || 3000);
  * Create HTTP server.
  */
 // TODO: Add Server
+var db = mongojs(constants.mongoConnectionString);
+db.on('error', function (err) {
+    console.log('database error', err)
+})
+
+db.on('ready', function () {
+    console.log('database connected')
+})
+GLOBAL.db = db;
+
+
 var server = require('./server');
 
 
