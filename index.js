@@ -36,7 +36,9 @@ var server = require('./server');
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port,config.get('IP')|' 127.0.0.1');
+server.listen(config.get('PORT'), config.get('IP'), function () {
+  console.log( "Listening on " + config.get('IP') + ", port " + config.get('PORT') )
+});
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -78,7 +80,7 @@ function onError(error) {
         process.exit(1);
         break;
     case 'EADDRINUSE':
-        console.error(bind + ' is already in use');
+        console.error(bind + ' is alreadyy in use');
         process.exit(1);
         break;
     default:
@@ -96,3 +98,4 @@ function onListening() {
     console.log('Listening on ' + bind);
     //  debug('Listening on ' + bind);
 }
+
