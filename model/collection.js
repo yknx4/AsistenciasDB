@@ -5,92 +5,50 @@ var defaults = require('../constants');
 var db = GLOBAL.db;
 
 function GenericRoute(name) {
-    console.log("Route: "+name);
+    console.log("Route: " + name);
     this.route = '/' + name;
     var collection = db.collection(name);
+
+    this.sort = function (req, res, next) {
+        if (typeof req.params.sort === 'undefined' || req.params.sort === null || req.params.sort == '') {
+            req.toSort = false;
+            return next();
+        }
+        req.toSort = true;
+        req.sort_criteria = {};
+        req.sort_criteria[req.params.sort] = 1;
+        if (!(typeof req.params.sort_order === 'undefined' || req.params.sort === null || req.params.sort == '')) {
+            if (req.params.sort_order.toLowerCase() === 'desc')
+                req.sort_criteria[req.params.sort] = -1;
+            delete req.params.sort_order;
+        }
+        delete req.params.sort;
+        return next();
+    }
+
     this.get = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
-        collection.find(function (err, docs) {
-            if(err) res.send(500,err);
-            else res.send(docs);
-        });
+        if (req.toSort) {
+            collection.find().sort(req.sort_criteria, function (err, docs) {
+                if (err) res.send(500, err);
+                else res.send(docs);
+            })
+        } else {
+            collection.find(function (err, docs) {
+                if (err) res.send(500, err);
+                else res.send(docs);
+            });
+        }
         return next();
     }
     this.post = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
-        collection.insert(req.body,function (err, resp) {
-            if(err) res.send(500,err);
-            else res.send(201,resp);
+        collection.insert(req.body, function (err, resp) {
+            if (err) res.send(500, err);
+            else res.send(201, resp);
         })
         return next();
     }
-
-//
-//    this.post = function (req, res) {
-//
-//        if (req.url.indexOf('/api/') > -1) {
-//            console.log(req.body);
-//            var response = db.getCollection(name).insert(req.body);
-//            res.send(response);
-//            return;
-//        }
-//
-//
-//        var response = defaults.newResponse();
-//        //console.log(req);      // your JSON
-//        //console.log(req.body);      // your JSON
-//        console.log(typeof req.body);
-//        if (req.body === null || !(typeof req.body === "string")) {
-//            var error = defaults.newError();
-//            error.code = 1;
-//            error.message = "Post data empty.";
-//            response.errors.push(error);
-//            res.send(response);
-//            return;
-//        }
-//        try {
-//            var prod = JSON.parse(req.body);
-//        } catch (e) {
-//
-//            var error = defaults.newError();
-//            error.code = 2;
-//            error.message = "Post data is invalid";
-//            response.errors.push(error);
-//            response.response = req.body;
-//            res.send(response);
-//            return;
-//        }
-//
-//        console.log(prod);
-//        if (Array.isArray(prod)) {
-//            if (prod[0].type != typeString) {
-//                var error = defaults.newError();
-//                error.code = 3;
-//                error.message = "Post type wrong.";
-//                response.errors.push(error);
-//                res.send(response);
-//                return;
-//            }
-//        } else {
-//            if (prod.type != typeString) {
-//                var error = defaults.newError();
-//                error.code = 3;
-//                error.message = "Post type wrong.";
-//                response.errors.push(error);
-//                res.send(response);
-//                return;
-//            }
-//        }
-//
-//
-//
-//
-//
-//        response.response = db.getCollection(name).insert(prod);
-//        res.send(response);
-//    }
-
-
 }
 
 
