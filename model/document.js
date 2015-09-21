@@ -2,24 +2,17 @@
 var db = GLOBAL.db;
 var mongojs = require('mongojs');
 var defaults = require('../constants');
+var routes_helper = require('../routes_helper');
 
 function GenericRouteSingle(name) {
-    console.log("Document Route: " + name);
+    //console.log("Document Route: " + name);
     this.route = '/' + name + '/:id';
     var collection = db.collection(name);
-
-    this.check_id = function (req, res, next) {
-        if (req.params.id === 'undefined' || req.params.id === null || req.params.id == '') {
-            res.send(404);
-            return false;
-        }
-        req.oid = req.params.id;
-        delete req.params.id;
-        return next();
-    };
+    this.protected = [];
+    var check_id = routes_helper.check_id_function;
 
 
-    this.del = function (req, res, next) {
+    var delFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         console.log("Removing :" + req.oid);
         collection.remove({
@@ -32,9 +25,18 @@ function GenericRouteSingle(name) {
         );
         return next();
     }
+    this.del = function () {
+        var pre = [routes_helper.check_token];
+        var mid = [];
+        if (this.protected.contains('del')) {
+            mid = mid.concat([routes_helper.check_master]);
+        }
+        var fin = [delFN];
+        return pre.concat(mid).concat(fin);
+    };
 
 
-    this.get = function (req, res, next) {
+    var getFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         collection.findOne({
             _id: mongojs.ObjectId(req.oid)
@@ -45,7 +47,19 @@ function GenericRouteSingle(name) {
         return next();
     }
 
-    this.post = function (req, res, next) {
+
+    this.get = function () {
+        var pre = [check_id];
+        var mid = [];
+        if (this.protected.contains('get')) {
+            mid = mid.concat([routes_helper.check_token, routes_helper.check_master]);
+        }
+        var fin = [getFN];
+        return pre.concat(mid).concat(fin);
+    };
+
+
+    var postFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         collection.findAndModify({
             query: {
@@ -61,7 +75,15 @@ function GenericRouteSingle(name) {
         })
         return next();
     }
-
+    this.post = function () {
+        var pre = [routes_helper.check_token, check_id];
+        var mid = [];
+        if (this.protected.contains('post')) {
+            mid = mid.concat([routes_helper.check_master]);
+        }
+        var fin = [postFN];
+        return pre.concat(mid).concat(fin);
+    };
 
 }
 

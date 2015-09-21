@@ -3,6 +3,7 @@ var cc          = require('config-multipaas');
 var config      = cc();
 var mongojs = require('mongojs');
 var constants = require('./constants');
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 /**
  * Get port from environment and store in Express.

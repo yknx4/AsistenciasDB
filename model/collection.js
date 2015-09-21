@@ -3,13 +3,15 @@
 
 var defaults = require('../constants');
 var db = GLOBAL.db;
+var routes_helper = require('../routes_helper');
 
 function GenericRoute(name) {
-    console.log("Route: " + name);
+    //console.log("Route: " + name);
+    this.protected = [];
     this.route = '/' + name;
     var collection = db.collection(name);
 
-    this.sort = function (req, res, next) {
+    var sort = function (req, res, next) {
         if (typeof req.params.sort === 'undefined' || req.params.sort === null || req.params.sort == '') {
             req.toSort = false;
             return next();
@@ -26,7 +28,7 @@ function GenericRoute(name) {
         return next();
     }
 
-    this.get = function (req, res, next) {
+    var getFn = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         if (req.toSort) {
             collection.find().sort(req.sort_criteria, function (err, docs) {
@@ -41,7 +43,19 @@ function GenericRoute(name) {
         }
         return next();
     }
-    this.post = function (req, res, next) {
+
+
+    this.get = function () {
+        var pre = [];
+        var mid = [];
+        if (this.protected.contains('get')) {
+            mid = mid.concat([routes_helper.check_token, routes_helper.check_master]);
+        }
+        var fin = [sort,getFn];
+        return pre.concat(mid).concat(fin);
+    };
+
+    var postFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         collection.insert(req.body, function (err, resp) {
             if (err) res.send(500, err);
@@ -49,6 +63,16 @@ function GenericRoute(name) {
         })
         return next();
     }
+
+    this.post = function () {
+        var pre = [routes_helper.check_token];
+        var mid = [];
+        if (this.protected.contains('post')) {
+            mid = mid.concat([routes_helper.check_master]);
+        }
+        var fin = [postFN];
+        return pre.concat(mid).concat(fin);
+    };
 }
 
 
