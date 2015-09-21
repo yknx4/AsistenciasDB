@@ -57,9 +57,11 @@ var authFN = function (req, res) {
                     }, function (err, resp) {
                         if (err) res.send(500, err);
                         id = resp._id;
+                        var message ='Enjoy your token!';
+                        if(user.master) message = 'Welcome back Master '+user.name; 
                         res.send({
                             success: true,
-                            message: 'Enjoy your token!',
+                            message: message,
                             token: token,
                             token_id: id
                         });

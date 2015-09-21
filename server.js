@@ -44,6 +44,7 @@ server.use(function (req, res, next) {
     next();
 });
 restify.CORS.ALLOW_HEADERS.push('sid');
+restify.CORS.ALLOW_HEADERS.push('authorization');
 server.use(restify.CORS());
 server.use(restify.fullResponse());
 server.use(routes_helper.check_token);
