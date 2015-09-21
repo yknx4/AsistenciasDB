@@ -32,7 +32,7 @@ module.exports = {
         //console.log(jwt);
         // decode token
         if (token) {
-
+            delete req.params.token;
             // verifies secret and checks exp
             jwt.verify(token, defaults.secret, function (err, decoded) {
                 if (err) {
