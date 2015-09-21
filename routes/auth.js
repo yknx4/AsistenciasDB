@@ -77,7 +77,7 @@ route.post = function () {
     var pre = [routes_helper.check_param_function('user'),routes_helper.check_param_function('password')];
     var mid = [];
     if(route.protected.contains('post')){
-        mid = mid.concat[routes_helper.check_token,routes_helper.check_master];
+        mid = mid.concat[routes_helper.enforce_login,routes_helper.check_master];
     }
     var fin = [authFN]
     return pre.concat(mid).concat(fin);

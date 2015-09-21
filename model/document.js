@@ -26,7 +26,7 @@ function GenericRouteSingle(name) {
         return next();
     }
     this.del = function () {
-        var pre = [routes_helper.check_token];
+        var pre = [routes_helper.enforce_login];
         var mid = [];
         if (this.protected.contains('del')) {
             mid = mid.concat([routes_helper.check_master]);
@@ -38,9 +38,11 @@ function GenericRouteSingle(name) {
 
     var getFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
+        var hidePasswordProjection = {password:0};
+        if(req.decoded) hidePasswordProjection = {};
         collection.findOne({
             _id: mongojs.ObjectId(req.oid)
-        }, function (err, doc) {
+        },hidePasswordProjection, function (err, doc) {
             if (err) res.send(500, err);
             else res.send(doc);
         })
@@ -52,7 +54,7 @@ function GenericRouteSingle(name) {
         var pre = [check_id];
         var mid = [];
         if (this.protected.contains('get')) {
-            mid = mid.concat([routes_helper.check_token, routes_helper.check_master]);
+            mid = mid.concat([routes_helper.enforce_login, routes_helper.check_master]);
         }
         var fin = [getFN];
         return pre.concat(mid).concat(fin);
@@ -76,7 +78,7 @@ function GenericRouteSingle(name) {
         return next();
     }
     this.put = function () {
-        var pre = [routes_helper.check_token, check_id];
+        var pre = [routes_helper.enforce_login, check_id];
         var mid = [];
         if (this.protected.contains('put')) {
             mid = mid.concat([routes_helper.check_master]);

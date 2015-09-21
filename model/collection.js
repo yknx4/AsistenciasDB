@@ -1,4 +1,4 @@
-/*/products/*/
+  /*/products/*/
 
 
 var defaults = require('../constants');
@@ -30,13 +30,15 @@ function GenericRoute(name) {
 
     var getFn = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
+        var hidePasswordProjection = {password:0};
+        if(req.decoded) hidePasswordProjection = {};
         if (req.toSort) {
-            collection.find().sort(req.sort_criteria, function (err, docs) {
+            collection.find(req.params,hidePasswordProjection).sort(req.sort_criteria, function (err, docs) {
                 if (err) res.send(500, err);
                 else res.send(docs);
             })
         } else {
-            collection.find(function (err, docs) {
+            collection.find(req.params,hidePasswordProjection,function (err, docs) {
                 if (err) res.send(500, err);
                 else res.send(docs);
             });

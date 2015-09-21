@@ -4,6 +4,25 @@ Array.prototype.contains = function (element) {
 };
 ////---HACK
 
+////VARIABLES
+var db = GLOBAL.db;
+
+var Route = require('./model/collection');
+var RouteDocument = require('./model/document');
+
+var ProtectedRoutes = {
+    all: ['/token', '/token/:id','/system.indexes','/system.indexes/:id'],
+    get: [],
+    post: ['/user','/user/:id'],
+    put:['/user','/user/:id'],
+    del:['/user','/user/:id']
+}
+var routes_helper = require('./routes_helper');
+
+////----VARIABLES
+
+
+
 
 var restify = require('restify'),
     constants = require('./constants');
@@ -27,6 +46,7 @@ server.use(function (req, res, next) {
 restify.CORS.ALLOW_HEADERS.push('sid');
 server.use(restify.CORS());
 server.use(restify.fullResponse());
+server.use(routes_helper.check_token);
 
 
 
@@ -48,19 +68,7 @@ server.get("/echo/:echo", function (req, res) {
 
 });
 
-var db = GLOBAL.db;
 
-var Route = require('./model/collection');
-var RouteDocument = require('./model/document');
-
-var ProtectedRoutes = {
-    all: ['/token', '/token/:id','/system.indexes','/system.indexes/:id'],
-    get: [],
-    post: ['/user','/user/:id'],
-    put:['/user','/user/:id'],
-    del:['/user','/user/:id']
-}
-var routes_helper = require('./routes_helper');
 
 function addRoute(route) {
     console.log("Adding: " + route.route);

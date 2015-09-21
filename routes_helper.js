@@ -26,7 +26,7 @@ module.exports = {
         return next();
     },
     check_token: function (req, res, next) {
-       //console.log('Checking aut');
+       //console.log('Checking Token');
         // check header or url parameters or post parameters for token
         var token = req.params.token || req.headers['x-access-token'];
         //console.log(jwt);
@@ -36,10 +36,7 @@ module.exports = {
             // verifies secret and checks exp
             jwt.verify(token, defaults.secret, function (err, decoded) {
                 if (err) {
-                    return res.json({
-                        success: false,
-                        message: 'Failed to authenticate token.'
-                    });
+                    next();
                 } else {
                     // if everything is good, save to request for use in other routes
                     req.decoded = decoded;
@@ -48,12 +45,17 @@ module.exports = {
             });
 
         } else {
-
-            // if there is no token
-            // return an error
+            next();
+        }
+    },
+    enforce_login: function (req, res, next) {
+        //console.log('Enforcing Login');
+        if (req.decoded) {
+            next();
+        } else {
             return res.send(403, {
                 success: false,
-                message: 'No token provided.'
+                message: 'No valid token provided.'
             });
 
         }
