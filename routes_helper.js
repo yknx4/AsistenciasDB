@@ -22,6 +22,7 @@ module.exports = {
             return false;
         }
         req.oid = req.params.id;
+        console.log("Id: "+req.oid);
         delete req.params.id;
         return next();
     },

@@ -26,7 +26,7 @@ function GenericRouteSingle(name) {
         return next();
     }
     this.del = function () {
-        var pre = [routes_helper.enforce_login];
+        var pre = [check_id,routes_helper.enforce_login];
         var mid = [];
         if (this.protected.contains('del')) {
             mid = mid.concat([routes_helper.check_master]);
