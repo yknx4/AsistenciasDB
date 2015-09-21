@@ -59,7 +59,7 @@ function GenericRouteSingle(name) {
     };
 
 
-    var postFN = function (req, res, next) {
+    var putFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         collection.findAndModify({
             query: {
@@ -75,13 +75,13 @@ function GenericRouteSingle(name) {
         })
         return next();
     }
-    this.post = function () {
+    this.put = function () {
         var pre = [routes_helper.check_token, check_id];
         var mid = [];
-        if (this.protected.contains('post')) {
+        if (this.protected.contains('put')) {
             mid = mid.concat([routes_helper.check_master]);
         }
-        var fin = [postFN];
+        var fin = [putFN];
         return pre.concat(mid).concat(fin);
     };
 
