@@ -58,7 +58,8 @@ function unknownMethodHandler(req, res) {
 
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Headers', allowHeaders.join(', '));
-    res.header('Access-Control-Allow-Methods', res.methods.join(', '));
+    //res.header('Access-Control-Allow-Methods', res.methods.join(', '));
+    res.header('Access-Control-Allow-Methods', '*');
     res.header('Access-Control-Allow-Origin', req.headers.origin);
 
     return res.send(204);
