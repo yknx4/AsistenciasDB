@@ -6,7 +6,7 @@ module.exports = {
         return function (req, res, next) {
             if (typeof req.extras === "undefined") req.extras = {};
             if (typeof req.params[name] === 'undefined' || req.params[name] === null || req.params[name] == '') {
-                res.send(404);
+                res.send(404,{success:false,message:"File not found"});
                 return false;
             }
             req.extras[name] = req.params[name];
@@ -17,8 +17,8 @@ module.exports = {
 
     check_id_function: function (req, res, next) {
 
-        if (req.params.id === 'undefined' || req.params.id === null || req.params.id == '') {
-            res.send(404);
+        if (typeof req.params.id === 'undefined' || req.params.id === null || req.params.id == '') {
+            res.send(404,{success:false,message:"File not found"});
             return false;
         }
         req.oid = req.params.id;
