@@ -5,7 +5,7 @@ module.exports = {
     check_param_function: function (name) {
         return function (req, res, next) {
             if (typeof req.extras === "undefined") req.extras = {};
-            if (req.params[name] === 'undefined' || req.params[name] === null || req.params[name] == '') {
+            if (typeof req.params[name] === 'undefined' || req.params[name] === null || req.params[name] == '') {
                 res.send(404);
                 return false;
             }

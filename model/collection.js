@@ -32,6 +32,7 @@ function GenericRoute(name) {
         res.set('content-type', 'application/json; charset=utf-8');
         var hidePasswordProjection = {password:0};
         if(req.decoded) hidePasswordProjection = {};
+        console.log(JSON.stringify(req.params));
         if (req.toSort) {
             collection.find(req.params,hidePasswordProjection).sort(req.sort_criteria, function (err, docs) {
                 if (err) res.send(500, err);
