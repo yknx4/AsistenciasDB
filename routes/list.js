@@ -15,7 +15,14 @@ var route = {
 
 route.protected = [];
 
+function sendRes(res, userTotal, current){
+
+
+}
+
+
 var getFN = function (req, res) {
+    var poke = 0;
     var result = new Array();
     var query = {
         club_id: req.extras.club,
@@ -34,13 +41,15 @@ var getFN = function (req, res) {
 
                         if (err) throw err;
                         if (att.length > 0) {
-                            console.log(att.length)
+                            console.log(user.name+" : "+att.length)
                             user.attendances = att;
                             result.push(user);
-                            console.log(result);
+                            //console.log(result);
                         }
+                        poke++;
+                        console.log("Poked: "+poke);
                         //if(att.length>0)console.log(att.length);
-                        if(users.indexOf(user) == (users.length-1)){
+                        if(poke == (users.length-1)){
                             res.send(result);
                         }
                     }
