@@ -41,7 +41,13 @@ var getFN = function (req, res) {
                         }
                         //if(att.length>0)console.log(att.length);
                         if(users.indexOf(user) == (users.length-1)){
-                            res.send(result);
+                            res.send(result.sort(function(a,b) {
+  if (a.last_nom < b.last_nom)
+    return -1;
+  if (a.last_nom > b.last_nom)
+    return 1;
+  return 0;
+}));
                         }
                     }
 
@@ -49,7 +55,7 @@ var getFN = function (req, res) {
 
             });
 
-            
+
         }
 
     );
