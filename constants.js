@@ -12,6 +12,11 @@ module.exports = {
     },
     array_contains: function (array, element) {
         return array.indexOf(element) > -1;
-    }
-    
+    },
+    sort_by_name: function(a, b){
+    if(a.name < b.name) return -1;
+    if(a.name > b.name) return 1;
+    return 0;
+}
+
 }

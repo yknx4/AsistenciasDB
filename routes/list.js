@@ -50,7 +50,7 @@ var getFN = function (req, res) {
                         console.log("Poked: "+poke);
                         //if(att.length>0)console.log(att.length);
                         if(poke == (users.length-1)){
-                            res.send(result);
+                            res.send(result.sort(defaults.sort_by_name));
                         }
                     }
 
