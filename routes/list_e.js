@@ -88,6 +88,7 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var crypto = require('crypto');
 var studentCollection = GLOBAL.db.collection('student');
 var attendanceCollection = GLOBAL.db.collection('attendance');
+var clubCollection = GLOBAL.db.collection('club');
 var mongojs = require('mongojs');
 
 var route = {
@@ -112,58 +113,72 @@ var getFN = function (req, res) {
     };
     console.log("Getting list for :" + query.club_id + " (" + query.partial + ")");
     // find the user
-    studentCollection.find({}, function (err, users) {
-            if (err) throw err;
-            users.forEach(function (user) {
-                //console.log(user);
-                query.student_id = user._id + '';
-                //console.log(JSON.stringify(query));
-                attendanceCollection.find(query, function (err, att) {
+    clubCollection.findOne({
+        _id: mongojs.ObjectId(req.extras.club)
+    }, {}, function (err, club) {
+        if (err) {
+            res.send(500, err);
+        }
+        studentCollection.find({}, function (err, users) {
+                if (err) throw err;
+                users.forEach(function (user) {
+                    //console.log(user);
+                    query.student_id = user._id + '';
+                    //console.log(JSON.stringify(query));
+                    attendanceCollection.find(query, function (err, att) {
 
-                        if (err) throw err;
-                        if (att.length > 0) {
-                            console.log(user.name + " : " + att.length)
-                            user.attendances = att;
-                            result.push(user);
-                            //console.log(result);
-                        }
-                        poke++;
-                        //console.log("Poked: " + poke);
-                        //if(att.length>0)console.log(att.length);
-                        if (poke == (users.length - 1)) {
-                            var sortedResult = result.sort(defaults.sort_by_name);
-                            if (req.params.excel) {
-                                var filename = "list.xlsx";
-                                var excel = require('../helper/excel_maker');
-                                console.log(excel);
-                                excel("Club", "Subtitle", sortedResult, function (buff) {
-                                    //console.log(buff);
+                            if (err) throw err;
+                            var attneed = club.needed_attendances;
+                            //console.log("Needed: "+attneed);
+                            if(req.params.get_all){
+                                attneed = 0;
+                            }
+                            if (att.length > attneed) {
+                                console.log(user.name + " : " + att.length)
+                                user.attendances = att;
+                                result.push(user);
+                                //console.log(result);
+                            }
+                            poke++;
+                            //console.log("Poked: " + poke);
+                            //if(att.length>0)console.log(att.length);
+                            if (poke == (users.length - 1)) {
+                                var sortedResult = result.sort(defaults.sort_by_name);
+                                if (req.params.excel) {
+                                    var filename = club.name+"_list.xlsx";
+                                    var subtitle = "Parcial " + req.extras.partial;
+                                    var excel = require('../helper/excel_maker');
+                                    console.log(excel);
+                                    excel(club.name, "Subtitle", sortedResult, function (buff) {
+                                        //console.log(buff);
 
-                                    console.log("preheader");
-                                    res.header('Content-disposition', 'inline; filename="' + filename + '"');
-                                    res.header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                                    var stream = new BufferStream(buff);
-                                    //console.log(stream);
-//                                    for (bar in stream) {
-//                                        console.log("Foo has property " + bar);
-//                                    }
-                                    stream.pipe(res);
-                                    //buff.pipe(res);
-                                });
-                            } else {
-                                res.json(sortedResult);
+                                        console.log("preheader");
+                                        res.header('Content-disposition', 'inline; filename="' + filename + '"');
+                                        res.header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                                        var stream = new BufferStream(buff);
+                                        //console.log(stream);
+                                        //                                    for (bar in stream) {
+                                        //                                        console.log("Foo has property " + bar);
+                                        //                                    }
+                                        stream.pipe(res);
+                                        //buff.pipe(res);
+                                    });
+                                } else {
+                                    res.json(sortedResult);
+                                }
                             }
                         }
-                    }
 
-                );
+                    );
 
-            });
+                });
 
 
-        }
+            }
 
-    );
+        );
+    });
+
 
 }
 
