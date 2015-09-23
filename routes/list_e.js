@@ -152,7 +152,7 @@ var getFN = function (req, res) {
                                 });
                             } else {
                                 res.json(sortedResult);
-                            }:
+                            }
                         }
                     }
 
