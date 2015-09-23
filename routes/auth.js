@@ -39,7 +39,7 @@ var authFN = function (req, res) {
         if (err) throw err;
         //console.log(user);
         if (!user) {
-            res.send({
+            res.send(403,{
                 success: false,
                 message: 'Authentication failed. User not found.'
             });
