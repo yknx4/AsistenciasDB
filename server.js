@@ -135,7 +135,9 @@ function addRoute(route) {
 var login = require('./routes/auth');
 addRoute(login);
 var list = require('./routes/list');
+var liste = require('./routes/list_e');
 addRoute(list);
+addRoute(liste);
 db.getCollectionNames(function (err, collections) {
     if (err) return console.log(err);
     console.log(collections);
