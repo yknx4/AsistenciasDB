@@ -12,9 +12,20 @@ var route = {
     route: '/' + name
 };
 
-route.get = function(){return [function (req, res) {
-    res.send(req.params);
-}]};
+var getFN = function(req,res){
+  res.send(200,{data:req.decoded,valid:true,message:"Welcome!"});
+};
+
+
+route.get = function () {
+    var pre = [routes_helper.enforce_login];
+    var mid = [];
+    if(route.protected.contains('get')){
+        mid = mid.concat[routes_helper.enforce_login,routes_helper.check_master];
+    }
+    var fin = [getFN]
+    return pre.concat(mid).concat(fin);
+};
 
 route.protected = [];
 
@@ -58,7 +69,7 @@ var authFN = function (req, res) {
                         if (err) res.send(500, err);
                         id = resp._id;
                         var message ='Enjoy your token!';
-                        if(user.master) message = 'Welcome back Master '+user.name; 
+                        if(user.master) message = 'Welcome back Master '+user.name;
                         res.send({
                             success: true,
                             message: message,
