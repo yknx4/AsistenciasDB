@@ -149,7 +149,7 @@ var getFN = function (req, res) {
                                     var subtitle = "Parcial " + req.extras.partial;
                                     var excel = require('../helper/excel_maker');
                                     console.log(excel);
-                                    excel(club.name, "Subtitle", sortedResult, function (buff) {
+                                    excel(club.name, subtitle, sortedResult, function (buff) {
                                         //console.log(buff);
 
                                         console.log("preheader");
