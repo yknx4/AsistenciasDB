@@ -133,7 +133,7 @@ var getFN = function (req, res) {
                             if(req.params.get_all){
                                 attneed = 0;
                             }
-                            if (att.length > attneed) {
+                            if (att.length >= attneed) {
                                 console.log(user.name + " : " + att.length)
                                 user.attendances = att;
                                 result.push(user);

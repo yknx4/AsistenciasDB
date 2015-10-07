@@ -33,7 +33,7 @@ var authFN = function (req, res) {
 
     // find the user
     collection.findOne({
-        user: req.extras.user
+        user: req.extras.user.toLowerCase()
     }, function (err, user) {
 
         if (err) throw err;
