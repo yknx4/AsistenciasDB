@@ -11,7 +11,7 @@ var Route = require('./model/collection');
 var RouteDocument = require('./model/document');
 
 var ProtectedRoutes = {
-    all: ['/token', '/token/:id','/system.indexes','/system.indexes/:id'],
+    all: ['/token', '/token/:id','/system.indexes','/system.indexes/:id','/modified','/modified/:id'],
     get: [],
     post: ['/user','/user/:id'],
     put:['/user','/user/:id'],

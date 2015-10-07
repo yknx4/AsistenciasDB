@@ -4,6 +4,7 @@ var config      = cc();
 var mongojs = require('mongojs');
 var constants = require('./constants');
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var storage = require('node-persist');
 
 /**
  * Get port from environment and store in Express.
@@ -25,6 +26,11 @@ db.on('ready', function () {
     console.log('database connected')
 })
 GLOBAL.db = db;
+
+
+storage.initSync();
+
+GLOBAL.storage = storage;
 
 
 var server = require('./server');
