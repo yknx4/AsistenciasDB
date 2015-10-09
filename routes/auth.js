@@ -49,7 +49,7 @@ var authFN = function (req, res) {
             var hash = crypto.createHash('sha256').update(req.extras.password).digest('base64');
             console.log(hash);
             if (user.password != hash) {
-                res.send(403,{
+                res.send(200,{
                     success: false,
                     message: 'Authentication failed. Wrong password.'
                 });
