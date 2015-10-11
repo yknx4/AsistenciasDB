@@ -43,10 +43,17 @@ function GenericRouteSingle(name) {
     var getFN = function (req, res, next) {
         res.set('content-type', 'application/json; charset=utf-8');
         console.log("Get request");
-        var lastModif = storage.getItem(name) || new Date();
+
+         var lastModif = storage.getItem(name);
+        console.log("Stored " + lastModif);
+        if (!lastModif) {
+            lastModif = new Date().toString();
+            storage.setItem(name,lastModif);
+        }
         console.log('Last modified: ' + lastModif);
         res.header('Last-Modified', lastModif);
-        res.header('Date', new Date());
+        res.header('Date', new Date().toString());
+        console.log("Date :" + new Date().toString());
 
         var hidePasswordProjection = {
             password: 0
@@ -86,12 +93,13 @@ function GenericRouteSingle(name) {
         }, function (err, doc, lastErrorObject) {
             if (err) res.send(500, err);
             else {
-                storage.setItem(name, new Date());
+                storage.setItem(name, new Date().toString());
                 res.send(200);
             }
         })
         return next();
     }
+    
     this.put = function () {
         var pre = [routes_helper.enforce_login, check_id];
         var mid = [];

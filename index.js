@@ -11,7 +11,7 @@ var storage = require('node-persist');
  */
 
 var port = normalizePort(config.get('PORT') || 3000);
-
+port = 3000;
 /**
  * Create HTTP server.
  */
@@ -44,8 +44,8 @@ var server = require('./server');
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(config.get('PORT'), config.get('IP'), function () {
-  console.log( "Listening on " + config.get('IP') + ", port " + config.get('PORT') )
+server.listen(port, config.get('IP'), function () {
+  console.log( "Listening on " + config.get('IP') + ", port " + port )
 });
 server.on('error', onError);
 server.on('listening', onListening);

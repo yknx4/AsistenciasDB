@@ -129,6 +129,15 @@ function addRoute(route) {
         server.del.apply(server, func_params.concat(route.del()));
         console.log("DELETE");
     }
+     if (typeof route.head !== "undefined") {
+        var func_params = [route.route];
+        if(ProtectedRoutes.all.contains(route.route)){
+            console.log("\nProtected [Master]");
+            route.protected.push('head');
+        }
+        server.head.apply(server, func_params.concat(route.head()));
+        console.log("HEAD");
+    }
 
 }
 
